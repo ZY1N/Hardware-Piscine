@@ -1,0 +1,368 @@
+FeatureScript 1096;
+import(path : "onshape/std/geometry.fs", version : "1096.0");
+
+// DEF LEGOMAKE
+//      Description:
+//         Function to create standardize lego pieces based on the user inputed number of column and rows
+//      Param:
+//          Length - number
+//              length is the number of rows that have been created, it is used to calculate where to sketch and extrude the components of the lego
+//          Width - number
+//              width is the number of columns that have been created, it is used to calculate where to sketch and extrude the componets of the lego
+//      Return: void
+
+annotation { "Feature Type Name" : "Lego Make" }
+export const myFeature = defineFeature(function(context is Context, id is Id, definition is map)
+    precondition
+    {
+        annotation { "Name" : "Length" }
+        isInteger(definition.length, POSITIVE_COUNT_BOUNDS);
+        annotation { "Name" : "Width" }
+        isInteger(definition.width, POSITIVE_COUNT_BOUNDS);
+
+        //Remove the comments on this, var logo and comment out var logo to enable custom logos, currently disabled so it only prints Lego
+        // annotation { "Name" : "Logo Text" }
+        // definition.logo is string;
+    }
+    {
+        var row = definition.length;
+        var column = definition.width;
+        var studdiam = 6;
+        var studheight = 1.6;
+        var height = 9.6;
+        var thickness = 1.6;
+        var eachblock = 8;
+        var cir_id = 0;
+        var logotext = "LEGO";
+        // var logotext = definition.logo;
+
+
+        //Make the block takes block size, row, height and column
+        blockMake(context, id, eachblock, row, height, column);
+
+        //Make the studs and extrude it, need it here because we need to use the opBoolean
+        //in order to union all of the mesh objects to get it ready for the shell
+        var topquery = makeStud(context, id, column, row, eachblock, cir_id, studdiam, studheight);
+
+        //Shell the bottom of the thing, because we drew the studs before extruding it makes the
+        //correct dimples on the bottom, it has to be in this order
+        shellIt(context, id, thickness);
+
+
+        //Make the post && extrude, so it makes both the solid posts and the empty posts as well
+        makeBottom(context, id, row, column, eachblock, height);
+
+        //Makes the logos
+        logoMake(context, id, topquery, column, row, 4.8, eachblock, logotext);
+
+        // To delete all of the sketches and tidy up, the rest is done in the make bottom to unify all the pieces
+        opDeleteBodies(context, id + "deleteBodies1", {
+                    "entities" : qSketchFilter(qEverything(), SketchObject.YES)
+
+                });
+    });
+
+//==================================================================================================================================================================//
+
+// DEF LOGOMAKE
+//      Description:
+//          Uses inscribed rectangle in circle formula in order to find the biggest rectangle possible inside a circle and extrudes the logo
+//      Param:
+//          Topquery - query
+//              topquery is the query that was created by the studextrude and holds the top surface of the extrude, where the logo will be printed
+//          Column - number
+//              column is the number of columns that the user wants, and is used in the calculation of where to insert text sketch
+//          Row - number
+//              row is the number of rows that the user wants, and is used in the calculation of where to insert text sketch
+//          Dia - number
+//              dia is the diameter of stud and is used in the calcuation of the textbox
+//          Width - number
+//              width is the measurement of the base blocks, statically set to the standard 8mm
+//          Logoprint - string
+//              logoprint is the string that will be inserted into the textsketch and extruded
+//      Return: void
+
+function logoMake(context is Context, id is Id, topquery is Query, column is number, row is number, dia is number, width is number, logoprint is string)
+{
+    if (logoprint == "")
+    {
+        return;
+    }
+    var logo = newSketch(context, id + "logosketch", {
+            "sketchPlane" : qNthElement(topquery, 1)
+        });
+    var textnum = 0;
+    for (var c = 1; c <= column; c += 1)
+    {
+        for (var r = 1; r <= row; r += 1)
+        {
+            skText(logo, "text1" ~ textnum, {
+                        "text" : logoprint,
+                        "fontName" : "DroidSansMono-Regular.ttf",
+                        "firstCorner" : vector((width / 2 * sqrt(2) - dia * 0.80) + width * (r - 1), (width / 2 * sqrt(2) - dia * 0.50) + width * (c - 1)) * millimeter,
+                        "secondCorner" : vector((width / 2 * sqrt(2) - dia * 0.80) + dia * 0.10 + width * (r - 1), (width / 2 * sqrt(2) - dia * 0.50) + dia * 0.25 + width * (c - 1)) * millimeter
+                    });
+            textnum += 1;
+        }
+    }
+    skSolve(logo);
+    opExtrude(context, id + "extrude5", {
+                "entities" : qSketchRegion(id + "logosketch", true),
+                "direction" : evOwnerSketchPlane(context, { "entity" : qSketchRegion(id + "logosketch") }).normal,
+                "endBound" : BoundingType.BLIND,
+                "endDepth" : .2 * millimeter
+            });
+    opBoolean(context, id + "boolean3", {
+                "tools" : qAllNonMeshSolidBodies(),
+                "operationType" : BooleanOperationType.UNION
+            });
+}
+
+//==================================================================================================================================================================//
+
+// DEF SHELLIT
+//      Description:
+//          Function to union all bodies and shell the bottom of object created by (function)makeblock, creating the empty space and the dimples underneath
+//      Param:
+//          Thickness - number
+//              thickness is how think the lego walls will be
+//      Return: void
+
+function shellIt(context is Context, id is Id, thickness is number)
+{
+    opBoolean(context, id + "boolean1", {
+                "tools" : qAllNonMeshSolidBodies(),
+                "operationType" : BooleanOperationType.UNION
+            });
+    //Shell the bottom of the thing, because we drew the studs before extruding it makes the
+    //correct dimples on the bottom, it has to be in this order
+    opShell(context, id + "shellblock", {
+                "entities" : qNthElement(qCreatedBy(id + "blockextrude", EntityType.FACE), 1),
+                "thickness" : -thickness * millimeter
+            });
+}
+
+//==================================================================================================================================================================//
+
+// DEF BLOCKMAKE
+//      Description:
+//          Function to make the blocks, starts at the origin and draws a rectangle (8 * row or column), extruds it by the standard height
+//      Param:
+//          Eachblock - number
+//              eachblock is the dimensions of the base measurement of 1 lego brick square, it is used to calcu the dimensions for bigger blocks
+//          Row - number
+//              row is the number of rows to create for the lego by multiplying with eachblock
+//          Height - number
+//              height is how tall the lego piece is, it's standard at 9.6mm, used in extrusion
+//          Column - number
+//              column is the number of columns to create for the lego by multiplying with eachblock
+//      Return: void
+
+function blockMake(context is Context, id is Id, eachblock is number, row is number, height is number, column is number)
+{
+    var blocksketch = newSketch(context, id + "blocksketch", {
+            "sketchPlane" : qCreatedBy(makeId("Top"), EntityType.FACE)
+        });
+    skRectangle(blocksketch, "blocksketch", {
+                "firstCorner" : vector(0, 0) * millimeter,
+                "secondCorner" : vector(eachblock * row, eachblock * column) * millimeter
+            });
+
+    skSolve(blocksketch);
+    opExtrude(context, id + "blockextrude", {
+                "entities" : qSketchRegion(id + "blocksketch"),
+                "direction" : evOwnerSketchPlane(context, { "entity" : qSketchRegion(id + "blocksketch") }).normal,
+                "endBound" : BoundingType.BLIND,
+                "endDepth" : height * millimeter
+            });
+
+}
+
+//==================================================================================================================================================================//
+
+// DEF MAKESTUD
+//      Description:
+//          Function to make the studs that are on top of the legos so that each piece can snap into place
+//      Param:
+//          Column - number
+//              column is the number of units that are in the lego vertically, it is used to calcuate where to place the studs
+//          Row - number
+//              row is the number of units that are in the lego horiontally, it is used to calcuate where to place the studs
+//          Eachblock - number
+//              each block is the measurement of 1 unit of block, it is used to calcuate where to place the studs
+//          Cir_id - number
+//              cir_id is a incremental counter that is used to give each of the generated studs an unique id
+//          Studdiam - number
+//              studdiam is the diameter of the studs that will be sketched
+//          Studheight - number
+//              studheight is how tall to extrude the studs
+//      Return:
+//          the top of the cylinder objects created by extrude
+
+// It makes the studs, first the calcuations are done via double loops
+//we move from the first column and first row and go through the x and then the y
+// we then extrude it by the studheight, which is a standard
+function makeStud(context is Context, id is Id, column is number, row is number, eachblock is number, cir_id is number, studdiam is number, studheight is number)
+{
+    var studsketch = newSketch(context, id + "sketchstud", {
+            "sketchPlane" : qNthElement(qCreatedBy(id + "blockextrude", EntityType.FACE), 2),
+        });
+
+    for (var c = 0; c < column; c += 1)
+    {
+        for (var r = 0; r < row; r += 1)
+        {
+            skCircle(studsketch, "top_cir" ~ cir_id, {
+                        "center" : vector((eachblock / 2) + eachblock * r, (eachblock / 2) + eachblock * c) * millimeter,
+                        "radius" : studdiam / 2 * millimeter
+                    });
+            cir_id += 1;
+        }
+    }
+
+    skSolve(studsketch);
+    opExtrude(context, id + "studextrude", {
+                "entities" : qSketchRegion(id + "sketchstud"),
+                "direction" : evOwnerSketchPlane(context, { "entity" : qSketchRegion(id + "sketchstud") }).normal,
+                "endBound" : BoundingType.BLIND,
+                "endDepth" : studheight * millimeter
+            });
+    return (qCreatedBy(id + "studextrude", EntityType.FACE));
+}
+
+//==================================================================================================================================================================//
+
+// DEF MAKEBOTTOM
+//      Description:
+//         Function to makes the bottom hollow posts and solid posts based on the dimensions of the lego piece
+//      Param:
+//          Row - number
+//              row is the number of rows that have been created, it is used to calculate what type of posts to put and where
+//          Column - number
+//              column is the number of columns that have been created, it is used to calculate what type of posts to put and where
+//          Eachblock - number
+//              eachblock is the size of the dimensions of a 1x1 lego piece, and is used to calculate where to put the posts
+//          Height - number
+//              height is the amount to extrude the posts to reach all the way to the top
+//      Return: void
+
+function makeBottom(context is Context, id is Id, row is number, column is number, eachblock is number, height is number)
+{
+    var post = 3.2;
+    var solidcolumn = 6.4;
+    var emptycolumn = 4.8;
+
+    var postsketch = newSketch(context, id + "postsketch", {
+            "sketchPlane" : qCreatedBy(makeId("Top"), EntityType.FACE)
+        });
+
+    var num = 1;
+
+    // If either row or column is 1 than we make a solid column, It goes through 2 for loops
+    // one that will fill it in for columns the other for rows. this is important if one of them is 1 and the other
+    // is greater than 1
+    if (row == 1 && column == 1)
+        return;
+    if (row == 1 || column == 1)
+        solidColumn(context, id, column, num, eachblock, post, row, postsketch);
+    else
+        hollowColumn(context, id, column, num, eachblock, row, solidcolumn, emptycolumn, postsketch);
+
+    // solves it and extrudes it, doesn't matter if its hollow or solid because we are using true
+    skSolve(postsketch);
+
+    opExtrude(context, id + "extrudepost", {
+                "entities" : qSketchRegion(id + "postsketch", true),
+                "direction" : evOwnerSketchPlane(context, { "entity" : qSketchRegion(id + "postsketch") }).normal,
+                "endBound" : BoundingType.BLIND,
+                "endDepth" : height * millimeter
+            });
+    // need to reunify the new pieces because otherwise it would couse trouble when it is 1, 1
+    opBoolean(context, id + "boolean2", {
+                "tools" : qAllNonMeshSolidBodies(),
+                "operationType" : BooleanOperationType.UNION
+            });
+}
+
+//==================================================================================================================================================================//
+
+// DEF MAKESOLIDCOLUMN
+//      Description:
+//         Function to makes the bottom solid posts based on the dimensions of the lego piece, aka anything x 1
+//      Param:
+//          Row - number
+//              row is the number of rows that have been created, it is used to calculate what type of posts to put and where
+//          Column - number
+//              column is the number of columns that have been created, it is used to calculate what type of posts to put and where
+//          Eachblock - number
+//              eachblock is the size of the dimensions of a 1x1 lego piece, and is used to calculate where to put the posts
+//          Num - number
+//              height is the amount to extrude the posts to reach all the way to the top
+//          Post - number
+//              post is a incremental counter that is used to give each of the generated studs an unique id
+//          Postsketch - sketch
+//              postsketch is the newsketch created for the columns to be drawn on
+//      Return: void
+
+function solidColumn(context is Context, id is Id, column is number, num is number, eachblock is number, post is number, row is number, postsketch is Sketch)
+{
+    //num, name, dimension of square, diameter post
+    for (var i = 0; i < column - 1; i += 1)
+    {
+        skCircle(postsketch, "circle1" ~ num, {
+                    "center" : vector(eachblock / 2, num * eachblock) * millimeter,
+                    "radius" : post / 2 * millimeter
+                });
+        num += 1;
+    }
+
+    for (var j = 0; j < row - 1; j += 1)
+    {
+        skCircle(postsketch, "circle1" ~ num, {
+                    "center" : vector(eachblock * num, eachblock / 2) * millimeter,
+                    "radius" : post / 2 * millimeter
+                });
+        num += 1;
+    }
+}
+
+//==================================================================================================================================================================//
+
+// DEF MAKEHOLLOWCOLUMN
+//      Description:
+//         Function to makes the bottom hollow posts based on the dimensions of the lego piece, aka anything where both dimensions are > 1
+//      Param:
+//          Row - number
+//              row is the number of rows that have been created, it is used to calculate what type of posts to put and where
+//          Column - number
+//              column is the number of columns that have been created, it is used to calculate what type of posts to put and where
+//          Eachblock - number
+//              eachblock is the size of the dimensions of a 1x1 lego piece, and is used to calculate where to put the posts
+//          Num - number
+//              height is the amount to extrude the posts to reach all the way to the top
+//          Post - number
+//              post is a incremental counter that is used to give each of the generated studs an unique id
+//          Postsketch - sketch
+//              postsketch is the newsketch created for the columns to be drawn on
+//      Return: void
+
+function hollowColumn(context is Context, id is Id, column is number, num is number, eachblock is number, row is number, solidcolumn is number, emptycolumn is number, postsketch is Sketch)
+{
+    for (var c = 0; c < column - 1; c += 1)
+    {
+        for (var r = 0; r < row - 1; r += 1)
+        {
+            skCircle(postsketch, "top_cir" ~ num, {
+                        "center" : vector((eachblock) + eachblock * r, (eachblock) + eachblock * c) * millimeter,
+                        "radius" : solidcolumn / 2 * millimeter
+                    });
+            num += 1;
+            skCircle(postsketch, "top_cir" ~ num, {
+                        "center" : vector((eachblock) + eachblock * r, (eachblock) + eachblock * c) * millimeter,
+                        "radius" : emptycolumn / 2 * millimeter
+                    });
+            num += 1;
+        }
+    }
+}
+

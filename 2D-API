@@ -1,0 +1,256 @@
+FeatureScript 1096;
+import(path : "onshape/std/geometry.fs", version : "1096.0");
+
+// DEF 2D
+//      Description: 
+//          script to make a octagon with circles inside of it, it takes circle radius, circle to circle, and the octagon size
+//      Param:
+//          circle radius - length
+//              the circle radius is the radius of the circles inside of the octagon, it is used to create the circles
+//          circle to circle - length
+//              circle to circle is the distance between the furthest center 2 circles, it is used to define the spacing
+//          octagon size - length
+//              octagon size is the distance between the opposite sides of the octagon, and is used to draw it
+//      Return: void
+
+annotation { "Feature Type Name" : "2d" }
+export const myFeature = defineFeature(function(context is Context, id is Id, definition is map)
+    precondition
+    {
+        //The IntegerBoundSpec is there in order to make it have a max, min, and default value
+        annotation { "Name" : "circle radius" }
+        isLength(definition.circlerad, {(millimeter) : [1, 10, 2000]} as LengthBoundSpec);
+        
+        annotation { "Name" : "circle to circle" }
+        isLength(definition.circletocircle, {(millimeter) : [1, 80, 2000]} as LengthBoundSpec);
+        
+        annotation { "Name" : "octagon size" }
+        isLength(definition.octagon, {(millimeter) : [1, 100, 2000]} as LengthBoundSpec);
+        
+    }
+    {
+        var oct = definition.octagon/millimeter;
+        var octscale = oct/100;
+        var c2c = definition.circletocircle/millimeter;
+        var cirrad = definition.circlerad/millimeter;
+    
+    //This will be the plane that is sketched on
+        var mainsketch = newSketch(context, id + "sketch1", {
+            "sketchPlane" : qCreatedBy(makeId("Top"), EntityType.FACE)
+        });
+    
+    //This draws the big octagon
+    drawOctagon(context, id, mainsketch, octscale, oct);
+    //This draws the circles
+    drawCircles(context, id, mainsketch, c2c, cirrad);
+    skSolve(mainsketch);
+    });
+
+//====================================================================================================================================//
+
+// DEF DRAWOCTAGON
+//      Description: 
+//          script to make a sketch of an octagon on the mainsketch
+//      Param:
+//          Mainsketch - sketch
+//              mainsketch is the sketch space that was created to sketch on
+//          Octscale - number
+//              octscale is the oct divided by 100, as to provide a ratio to scale the octagon by, most importanly the first vertex by
+//          Oct - number
+//              oct is the sie of the octagon and is divided in half in order to find where the first Vertex gones, it helps in orientation and length
+//      Return: void
+
+    //Mainsketch, octscale, and oct are imported to draw the octagon, they determine the plane being sketched on,
+    //how big it is, and 1/10 of the oct respectively
+    function drawOctagon(context is Context, id is Id, mainsketch is Sketch, octscale is number, oct is number)
+    {
+        //We need to find the first vertex, because the original vertex is at 0,0 which makes the octagon orient the wrong way
+        //20.711 is the side length of the triangle, and a scale factor is applied in order for it to scale to bigger octagons
+        skRegularPolygon(mainsketch, "polygon1", {
+                "center" : vector(0, 0) * millimeter,
+                "firstVertex" : vector(20.711*octscale, oct/2) * millimeter,
+                "sides" : 8
+        });
+        
+    }
+
+//====================================================================================================================================//
+
+// DEF DRAWCIRCLES
+//      Description: 
+//          function to dispatch the chracteristics of the circles to be drawn to the function that actually draws them
+//      Param:
+//          Mainsketch - sketch
+//              mainsketch is the plane that all of the sketches are made
+//          C2c - number
+//              c2c is the distance between the center points of the furthest 2 circles, it is used to calculate where to place centerpoints of other circles
+//          Cirrad - number
+//              cirrad is the radius of the circles that are being drawn
+//      Return: void
+
+    //Function to draw the circles in the right places
+    function drawCircles(context is Context, id is Id, mainsketch is Sketch, c2c is number, cirrad is number)
+    {
+    //These are the number of circles from left to right that should be printed
+    var count1 = 3;
+    var count2 = 5;
+    var count3 = 7;
+    var count4 = 7;
+    var count5 = 7;
+    var count6 = 5;
+    var count7 = 3;
+    var p2p = c2c/6;
+    
+    setVariable(context, 'cirid', 0);
+
+    //countnum is the number of circles to print in that column, cirid keeps track of the circles, cirid tells how big to draw circle
+    //c2c is the difference between the position of the circle to the opposite side
+    //a, b, c are variables used to move the position of the circle horizontally. C is calculated by using a percentage of the circle to circle
+    // distance and using the counter to find which one it is. so that it draws from the upmost one down till the last center is equal to 
+    // the circle to circle distance
+    sketchCircle(context, id, 3, mainsketch, cirrad, c2c, -3, 4, 1 - ((p2p*2)/c2c));
+    sketchCircle(context, id, 5, mainsketch, cirrad, c2c, -2, 2, 1 - ((p2p*2)/c2c));
+    sketchCircle(context, id, 7, mainsketch, cirrad, c2c, -1, 2, 1);
+    sketchCircle(context, id, 7, mainsketch, cirrad, c2c, 0, 2, 1);
+    sketchCircle(context, id, 7, mainsketch, cirrad, c2c, 1, 2, 1);    
+    sketchCircle(context, id, 5, mainsketch, cirrad, c2c, 2, 2, 1 - ((p2p*2)/c2c));    
+    sketchCircle(context, id, 3, mainsketch, cirrad, c2c, 3, 4, 1 - ((p2p*2)/c2c));
+    }
+
+//====================================================================================================================================//
+
+// DEF SKETCHCIRCLE
+//      Description: 
+//          function to sketch the circles
+//      Param:
+//          Countnum - number
+//              countnum is the number of circles that are to be drawn in that particular X location
+//          Cirrid - number
+//              cirrid is used to concatonate with the query to make unique ids
+//          Mainsketch - sketch
+//              mainsketch is the plane that all of the sketches are made
+//          Cirrad - number
+//              cirrad is the radius of the circles that are being drawn
+//          C2c - number
+//              c2c is the distance between the center points of the furthest 2 circles, it is used to calculate where to place centerpoints of other circles
+//          A - number
+//              A is the offset for the X axsis, and determines what particular offset it is before going onto the next
+//          B - number
+//              B is to used find the current c2c at the bottom of the equation so it can be used as a divisor of c to find the current y coordinates
+//          C - number
+//              C reperesents a portion of the whole c2c number, and therefore is useful when calculation the start offset of verticle groups that aren't 7
+//      Return: void
+
+    function sketchCircle(context is Context, id is Id, countnum is number, mainsketch is Sketch, cirrad is number, c2c is number, a is number, b is number, c is number)
+    {
+        var p2p = c2c/6;
+        
+        //p2p, or point to point is the distance between the centers for each circle it is used to calcualte the difference on the grid
+        // from -3 to 3 horizontally. c and b are used to streamline the actual functions that can be seen below
+        for (var z = 0; z < countnum; z += 1)
+        {
+            skCircle(mainsketch, "circle1"~getVariable(context, 'cirid'), {
+                "center" : vector(a*p2p, ((c)*c2c)/b-(z * p2p)) * millimeter,
+                "radius" : cirrad/2 * millimeter
+            });
+        setVariable(context, 'cirid', getVariable(context, 'cirid') + 1);
+        }
+//        return(cirid);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // function drawcircles(context is Context, id is Id, mainsketch is Sketch, c2c is number, cirrad is number)
+    // {
+    //         var count1 = 3;
+    // var count2 = 5;
+    // var count3 = 7;
+    // var count4 = 7;
+    // var count5 = 7;
+    // var count6 = 5;
+    // var count7 = 3;
+    // var cirid = 0;
+    // var p2p = c2c/6;
+    
+    // for (var z = 0; z < count1; z += 1)
+    // {
+    //   skCircle(mainsketch, "circle1"~cirid, {
+    //         "center" : vector(-3*p2p, (c2c-(p2p*2))/4-(z * p2p)) * millimeter,
+    //         "radius" : cirrad/2 * millimeter
+    //     });
+    //     cirid += 1; 
+    // }
+    
+    // for (var a = 0; a < count2; a += 1)
+    // {
+    //   skCircle(mainsketch, "circle1"~cirid, {
+    //         "center" : vector(-2*p2p, (c2c-(p2p*2))/2-(a * p2p)) * millimeter,
+    //         "radius" : cirrad/2 * millimeter
+    //     });
+    //     cirid += 1; 
+    // }  
+    
+    // for (var b = 0; b < count3; b += 1)
+    // {
+    //   skCircle(mainsketch, "circle1"~cirid, {
+    //         "center" : vector(-p2p, c2c/2-(b * p2p)) * millimeter,
+    //         "radius" : cirrad/2 * millimeter
+    //     });
+    //     cirid += 1; 
+    // }  
+
+    // for (var c = 0; c < count4; c += 1)
+    // {
+    //   skCircle(mainsketch, "circle1"~cirid, {
+    //         "center" : vector(0, c2c/2-(c * p2p)) * millimeter,
+    //         "radius" : cirrad/2 * millimeter
+    //     });
+    //     cirid += 1; 
+    // }
+    // for (var d = 0; d < count5; d += 1)
+    // {
+    //   skCircle(mainsketch, "circle1"~cirid, {
+    //         "center" : vector(p2p, c2c/2-(d * p2p)) * millimeter,
+    //         "radius" : cirrad/2 * millimeter
+    //     });
+    //     cirid += 1; 
+    // }
+    // for (var e = 0; e < count6; e += 1)
+    // {
+    //   skCircle(mainsketch, "circle1"~cirid, {
+    //         "center" : vector(2*p2p, (c2c-(p2p*2))/2-(e * p2p)) * millimeter,
+    //         "radius" : cirrad/2 * millimeter
+    //     });
+    //     cirid += 1; 
+    // }
+    // for (var f = 0; f < count7; f += 1)
+    // {
+    //   skCircle(mainsketch, "circle1"~cirid, {
+    //         "center" : vector(3*p2p, (c2c-(p2p*2))/4-(f * p2p)) * millimeter,
+    //         "radius" : cirrad/2 * millimeter
+    //     });
+    //     cirid += 1; 
+    // }    
+    // }

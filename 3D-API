@@ -1,0 +1,333 @@
+FeatureScript 1096;
+import(path : "onshape/std/geometry.fs", version : "1096.0");
+
+// DEF 3DFEATURE
+//      Description:
+//         Function to create a structure with a half circle arc, base, and triangle
+//      Param:          
+//          Hole Size - length
+//              is used to define the circle cutout as its diameter
+//          Outer Cirle - length
+//              outercirle is used along with the hole size in order to help define the solid head which is then extruded
+//          Main Height - length
+//              main height is the height extruded for the head portion
+//          Rib Width - length
+//              rib width is the thickness of the triangle rib in the mid
+//          Neck Width - length
+//              neck width is the last part of the head portion, which is tangent to the circle and starts from the midpoint of the circle
+//          Base Height - length
+//              base height is the height to extrude for the base
+//          Triangle Cutout - length
+//              triangle cutout is the cutout of the base 
+//          Width of Rectangle - length
+//              width of rectangle is the the width dimension of the base, and is used to sketch the base
+//      Return: void
+
+annotation { "Feature Type Name" : "3D Feature" }
+export const myFeature = defineFeature(function(context is Context, id is Id, definition is map)
+    precondition
+    {   
+        //These prompt the user for input, with a min, default, and a max
+        annotation { "Name" : "Hole Size" }
+        isLength(definition.hole, {(millimeter) : [1, 7.5, 20000000]} as LengthBoundSpec);
+        
+        annotation { "Name" : "Outer Circle" }
+        isLength(definition.outercircle, {(millimeter) : [1, 15, 20000000]} as LengthBoundSpec);
+     
+        annotation { "Name" : "Main Height" }
+        isLength(definition.mainheight, {(millimeter) : [1, 30, 20000000]} as LengthBoundSpec);         
+        
+        annotation { "Name" : "Rib Width" }
+        isLength(definition.rib, {(millimeter) : [1, 7, 20000000]} as LengthBoundSpec);
+        
+        annotation { "Name" : "Neck Width" }
+        isLength(definition.neck, {(millimeter) : [1, 18, 20000000]} as LengthBoundSpec);
+        
+        annotation { "Name" : "Base Height" }
+        isLength(definition.baseheight, {(millimeter) : [1, 10, 20000000]} as LengthBoundSpec);
+        
+        annotation { "Name" : "Triangle Cutout" }
+        isLength(definition.reccut, {(millimeter) : [1, 9, 20000000]} as LengthBoundSpec);
+        
+        annotation { "Name" : "Width of rectangle" }
+        isLength(definition.recwidth, {(millimeter) : [1, 42, 20000000]} as LengthBoundSpec);        
+    }
+    {
+        // this is used to get rid of the measurement from the preconditions and will be used to generate the piece
+        var hole = definition.hole/millimeter;
+        var rib = definition.rib/millimeter;
+        var outercircle = definition.outercircle/millimeter;
+        var neck = definition.neck/millimeter;
+        var baseheight = definition.baseheight/millimeter;
+        var mainheight = definition.mainheight/millimeter;
+        var trianglecut = definition.reccut/millimeter;
+        var widthfromcircle = definition.recwidth/millimeter;
+        
+        // These are constraints if the drawing becomes not valid, it forcebally makes it valid and gives the user
+        // a warning message telling them which variables to change
+        
+
+        
+        var limitMap = {
+            'outercircle' : outercircle,
+            'hole' : hole,
+            'neck' : neck,
+            'widthfromcircle' : widthfromcircle,
+            'baseheight' : baseheight,
+            'mainheight' : mainheight,
+            'trianglecut' : trianglecut,
+            'rib' : rib
+        };
+
+        limitMap = limitCheck(context, id, limitMap);
+        outercircle = limitMap.outercircle; 
+        hole = limitMap.hole;
+        neck = limitMap.neck;
+        widthfromcircle = limitMap.widthfromcircle;
+        baseheight = limitMap.baseheight;
+        mainheight = limitMap.mainheight;
+        trianglecut = limitMap.trianglecut;
+        rib = limitMap.rib;
+
+        //make head piece, sketch and revolve
+        headMake(context, id, outercircle, neck, mainheight, hole);
+        
+        //make second piece, sketch and revolve
+        mainPiece(context, id, neck, trianglecut, outercircle, widthfromcircle, baseheight);
+             
+        //triangle draw, sketch and revolve
+        triangleMake(context, id, neck, mainheight, baseheight, widthfromcircle, rib);
+        
+        // This unions all of the solids and deletes all of the 
+        opBoolean(context, id + "boolean2", {
+                "tools" : qAllNonMeshSolidBodies(),
+                "operationType" : BooleanOperationType.UNION
+            });
+            
+        opDeleteBodies(context, id + "deleteBodies1", {
+                "entities" : qSketchFilter(qEverything(), SketchObject.YES)
+        });
+    });
+    
+//==============================================================================================================================================================================// 
+
+// DEF LIMITCHECK
+//      Description:
+//         Function to check for the limits and give warnings when the user input is out of bounds 
+//      Param:          
+//          Ary - array
+//              array holds
+//                var ary = [outercircle, hole, neck, widthfromcircle, baseheight, mainheight];
+//              which are the entitites that we are checking for, further explaination is below
+//      Return: void
+//
+
+function limitCheck(context is Context, id is Id, limitMap is map)
+{
+        // protect against rib being too wide
+        if(limitMap.outercircle*2-limitMap.trianglecut*2 < limitMap.rib)
+        {
+            if (limitMap.outercircle*2-limitMap.trianglecut*2 > 0)
+                limitMap.rib = limitMap.outercircle*2-limitMap.trianglecut*2;
+            else
+                limitMap.rib = 1;
+            reportFeatureWarning(context, id, "Rib width is not valid");
+        }
+        // This is to prevent the extrude feature from breaking with 2 nonvalid circles (outercircle, hole)
+        if (limitMap.outercircle < limitMap.hole)
+        {
+            limitMap.outercircle = limitMap.hole;
+            reportFeatureWarning(context, id, "Hole is greater than outercircle, not valid");
+        }
+        // this is to prevent the outer neck from going into the hole that is made by the circles (neck, outercircle)
+        if (limitMap.neck < limitMap.outercircle)
+        {
+            limitMap.neck = limitMap.outercircle;
+            reportFeatureWarning(context, id, "Neck cannot be smaller than outercircle, not valid");   
+        }
+        // this is to prevent the triangle cutouts from intersecting too much so that the extrude won't work  (outercircle, trianglecut)
+        if (limitMap.outercircle < limitMap.trianglecut)
+        {
+            limitMap.trianglecut = limitMap.outercircle;
+            reportFeatureWarning(context, id, "Triangle cutout cannot be smaller than outercircle, not valid");   
+        }
+        
+        // this is to prevent the rectangle from messing up when the triangle becomes too big (widthfromcircle, outercircle)
+        if (limitMap.widthfromcircle < limitMap.outercircle)
+        {
+            limitMap.widthfromcircle = limitMap.outercircle;
+            reportFeatureWarning(context, id, "The length of rectangle cannot be smaller than outertriangle, not valid");   
+        }
+        
+        // protection against when baseheight and mainheight are the same (baseheight, mainheight)
+        if (limitMap.baseheight == limitMap.basheightmainheight)
+        {
+            limitMap.basheight = limitMap.baseheight - 0.5;
+            reportFeatureWarning(context, id, "Baseheight cannot be the same as mainheight");            
+        }
+        return (limitMap);
+}
+ 
+//==============================================================================================================================================================================//   
+
+// DEF HEADPIECE
+//      Description:
+//         Function to create the head piece, which is made up of a circle with a hole in it and a rectangle portion that intersects the circle
+//      Param:          
+//          Outercircle - number 
+//              outercircle is the main piece of ark to be extruded along with the neck minus the hole
+//          Hole - number
+//              the hole helps define the cut out circle portion of the head, it is used to define the outer ring, which will be extruded
+//          Neck - number
+//              the neck is tangent to the outercircle and is to define the rectangle portion of the head piece
+//          Mainheight - number
+//              maineheight is used to extrude the headpiece according to the user input
+//      Return: void
+   
+    // Make the headpiece(circle extude with the neck rectangle)
+    function headMake(context is Context, id is Id, outercircle is number, neck is number, mainheight is number, hole is number)
+    {
+        var topsketch = newSketch(context, id + "topsketch", {
+                "sketchPlane" : qCreatedBy(makeId("Top"), EntityType.FACE)
+        });
+
+        //hole: inner circle
+        skCircle(topsketch, "circle1", {
+                "center" : vector(0, 0) * millimeter,
+                "radius" : hole * millimeter
+        });
+        
+        //outercircle        
+        skCircle(topsketch, "circle2", {
+            "center" : vector(0, 0) * millimeter,
+            "radius" : outercircle * millimeter
+        });
+        
+        //rectangle for the neck
+        skRectangle(topsketch, "rectangle1", {
+                "firstCorner" : vector(0, -outercircle) * millimeter,
+                "secondCorner" : vector(neck, outercircle) * millimeter
+        });
+        
+        skSolve(topsketch);
+        
+        opExtrude(context, id + "extrude1", {
+                "entities" : qSketchRegion(id + "topsketch", true),
+                "direction" : evOwnerSketchPlane(context, {"entity" : qSketchRegion(id + "topsketch")}).normal,
+                "endBound" : BoundingType.BLIND,
+                "endDepth" : mainheight * millimeter
+        }); 
+    }
+
+//==============================================================================================================================================================================//
+
+// DEF MAKEMAINPIECE
+//      Description:
+//         Function to create the main piece, aka the base, it also includes the triangular cutouts at the end of the base
+//      Param:          
+//          Neck - number 
+//              neck is part of the headpiece, and is used here to calcualte the main piece by addint it to the widthfromcircle and subtracting the triangular cut
+//          Trianglecut - number
+//              triangle cut is the length and width of the triangle cutout on the end of the base
+//          Outercircle - number
+//              outercircle is the diameter of the headpiece, it is used here to draw the main body rectangle
+//          Widthfromcircle - number
+//              widthfromcircle is the total length that comes after the neck and is the beginning of the base rectangle
+//          Baseheight - number
+//              baseheight is the height to extrude the base including both the rectangle and the parallelogram
+//      Return: void
+
+    //Make the main body(makes the platform with the rectangled edges )
+    function mainPiece(context is Context, id is Id, neck is number, trianglecut is number, outercircle is number, widthfromcircle is number, baseheight is number)
+    {
+        var topsketch2 = newSketch(context, id + "topsketch2", {
+                "sketchPlane" : qCreatedBy(makeId("Top"), EntityType.FACE)
+        });
+        
+        skRectangle(topsketch2, "rectangle1", {
+                "firstCorner" : vector(neck, -outercircle) * millimeter,
+                "secondCorner" : vector(widthfromcircle+neck-trianglecut, outercircle) * millimeter
+        });
+        
+        // these 3 line segments make up the triangle cutouts at the end and are extruded along with the rest of the
+        //main body
+        
+        // top down diagonal
+        skLineSegment(topsketch2, "line1", {
+                "start" : vector(widthfromcircle+neck-trianglecut, outercircle) * millimeter,
+                "end" : vector(widthfromcircle+neck, outercircle-trianglecut) * millimeter
+        });
+        
+        // down up diagonal
+         skLineSegment(topsketch2, "line2", {
+            "start" : vector(widthfromcircle+neck-trianglecut, -outercircle) * millimeter,
+            "end" : vector(widthfromcircle+neck, -outercircle+trianglecut) * millimeter
+        });
+        
+        // straight line
+         skLineSegment(topsketch2, "line3", {
+                 "start" : vector(widthfromcircle+neck, outercircle-trianglecut) * millimeter,
+                 "end" : vector(widthfromcircle+neck, -outercircle+trianglecut) * millimeter
+         });
+            
+        skSolve(topsketch2);
+        
+        opExtrude(context, id + "extrude2", {
+                "entities" : qSketchRegion(id + "topsketch2"),
+                "direction" : evOwnerSketchPlane(context, {"entity" : qSketchRegion(id + "topsketch2")}).normal,
+                "endBound" : BoundingType.BLIND,
+                "endDepth" : baseheight * millimeter
+        });
+    }
+
+//==============================================================================================================================================================================//
+
+// DEF TRIANGLEMAKE
+//      Description:
+//         Function to create the triangle rib in the middle of the structure
+//      Param:          
+//          Neck - number
+//              neck is where the headpiece stops and the base begins, here it is used as part of the vector to sketch the triangle to start
+//          Mainheight - number
+//              mainheight is the height of the head and is used to define the height of the triangle, so that it will scale when the head is changed
+//          Baseheight - number
+//              baseheight is the height of the base and therefore the base of the triangle
+//          Widthfromcircle - number
+//              widthfromcircle is dimension of the rectangle from the head and is used here to help define the verticle line segment of the triangle
+//          Rib - number
+//              rib is the width of the triangle when extruding
+//      Return: void
+   
+    // Make center triangle aka the little piece that looks like a flag
+    function triangleMake(context is Context, id is Id, neck is number, mainheight is number, baseheight is number, widthfromcircle is number, rib is number)
+    {
+        var frontsketch = newSketch(context, id + "frontsketch", {
+                "sketchPlane" : qCreatedBy(makeId("Front"), EntityType.FACE)
+        });
+        
+        // makes the diagonal line from the height of the head to the base
+        skLineSegment(frontsketch, "line4", {
+                "start" : vector(neck, mainheight) * millimeter,
+                "end" : vector(neck, baseheight) * millimeter
+        });
+        
+        // makes the line straight up
+        skLineSegment(frontsketch, "line5", {
+                "start" : vector(neck, baseheight) * millimeter,
+                "end" : vector(widthfromcircle+neck, baseheight) * millimeter
+        });
+        
+        // makes the line horizontal
+        skLineSegment(frontsketch, "line6", {
+                "start" : vector(neck, mainheight) * millimeter,
+                "end" : vector(widthfromcircle+neck, baseheight) * millimeter
+        });
+        
+        skSolve(frontsketch);
+        
+        extrude(context, id + "extrude3", {
+                "entities" : qSketchRegion(id + "frontsketch"),
+                "endBound" : BoundingType.SYMMETRIC,
+                "depth" : rib * millimeter
+        });
+    } 
