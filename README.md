@@ -2,13 +2,13 @@
 Hardware Piscine at 42Robolab including sketching, 3d modeling, and making API through the Onshape interface, and Featurescript
 
 Content
-  API
+*API
     LegoAPI
     2DAPI
     3DAPI
-  Sketch
+*Sketch
     pic and links
-  3D Models
+*3D Models
     pic and links
 
 API:
