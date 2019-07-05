@@ -1,7 +1,7 @@
 # Hardware-Piscine
 Hardware Piscine at 42Robolab including sketching, 3d modeling, and making API through the Onshape interface, and Featurescript
 
-Content
+## Content
 *API
     LegoAPI
     2DAPI
@@ -14,5 +14,9 @@ Content
 API:
   LegoAPI
      An API to create standardize lego pieces based on the user inputed number of and rows. The dimensions of standards:         var studdiam = 6;
+     
+   1 adf
+   2 asdf
+   3 adsf
 
    
