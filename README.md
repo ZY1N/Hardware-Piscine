@@ -82,14 +82,11 @@ Hardware Piscine at 42Robolab including sketching, 3d modeling, and making API t
 ## [Ex6 Link](https://cad.onshape.com/documents/9bb0feb3b7197639841b5e6b/w/dcff77028b7e356a93e02910/e/73ca20134810b3bdd185314e)
 <img width="855" alt="Screen Shot 2019-07-05 at 9 02 40 PM" src="https://user-images.githubusercontent.com/27908897/60751352-674c9c80-9f68-11e9-988c-7e36f345344e.png">
 
-## [Ex7 Link](https://cad.onshape.com/documents/9bb0feb3b7197639841b5e6b/w/dcff77028b7e356a93e02910/e/73ca20134810b3bdd185314e)
+## [Ex7 Link](https://cad.onshape.com/documents/41a0902a0fbc869f1070eb4b/w/33f0ffb32e36d70a4fa52a73/e/f83f87eb09e020accb423dc0)
 <img width="833" alt="Screen Shot 2019-07-05 at 9 02 52 PM" src="https://user-images.githubusercontent.com/27908897/60751355-687dc980-9f68-11e9-8239-0ecb793ae99b.png">
 
-## [Ex8 Link](https://cad.onshape.com/documents/41a0902a0fbc869f1070eb4b/w/33f0ffb32e36d70a4fa52a73/e/f83f87eb09e020accb423dc0)
+## [Ex8 Link](https://cad.onshape.com/documents/5763ac9db029ca607e83fc50/w/637352478f970817aafd8507/e/0798628f572d90365b022633)
 <img width="853" alt="Screen Shot 2019-07-05 at 9 02 59 PM" src="https://user-images.githubusercontent.com/27908897/60751356-6a478d00-9f68-11e9-81b2-ab5828469f1a.png">
-
-## [Ex9 Link](https://cad.onshape.com/documents/5763ac9db029ca607e83fc50/w/637352478f970817aafd8507/e/0798628f572d90365b022633)
-<img width="890" alt="Screen Shot 2019-07-05 at 9 03 05 PM" src="https://user-images.githubusercontent.com/27908897/60751358-6c115080-9f68-11e9-8dfb-52c72fd27b5b.png">
 
 
 
