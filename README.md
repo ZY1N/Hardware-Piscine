@@ -63,11 +63,40 @@ Hardware Piscine at 42Robolab including sketching, 3d modeling, and making API t
 
 
 ## 3D Models
-https://cad.onshape.com/documents/d7805382c06ffe7c0ff71e7b/w/135c267ab01134a815dbe660/e/a26a36dec67e1446019ec76d
-https://cad.onshape.com/documents/ce6b3f761dae27f51383f0ae/w/dce128a4ce87be56ab97591c/e/528405de5b3a2f177e0ef847
-https://cad.onshape.com/documents/2004900a5cd6068e9c3f3f13/w/4030c5bc0a589c10c97ccc0e/e/1583afa118f02b2adb99f9a8
-https://cad.onshape.com/documents/adfc4258e118d9faefffc772/w/a6e4860400c460c59e21fae1/e/8865a6923bc9a3f779638252
-https://cad.onshape.com/documents/6ec3ca706af37e365d74650d/w/12490c839f70f678376af77b/e/6506ab15f35cc7fa4cdb56f4
-https://cad.onshape.com/documents/9bb0feb3b7197639841b5e6b/w/dcff77028b7e356a93e02910/e/73ca20134810b3bdd185314e
-https://cad.onshape.com/documents/41a0902a0fbc869f1070eb4b/w/33f0ffb32e36d70a4fa52a73/e/f83f87eb09e020accb423dc0
-https://cad.onshape.com/documents/5763ac9db029ca607e83fc50/w/637352478f970817aafd8507/e/0798628f572d90365b022633
+
+## [Ex1 Link]()
+<img width="804" alt="Screen Shot 2019-07-05 at 9 02 02 PM" src="https://user-images.githubusercontent.com/27908897/60751343-5e5bcb00-9f68-11e9-966d-dc7f08f3c54d.png">
+
+## [Ex2 Link](https://cad.onshape.com/documents/d7805382c06ffe7c0ff71e7b/w/135c267ab01134a815dbe660/e/a26a36dec67e1446019ec76d)
+<img width="889" alt="Screen Shot 2019-07-05 at 9 02 09 PM" src="https://user-images.githubusercontent.com/27908897/60751344-5f8cf800-9f68-11e9-85b2-294b47686ed1.png">
+
+## [Ex3 Link](https://cad.onshape.com/documents/ce6b3f761dae27f51383f0ae/w/dce128a4ce87be56ab97591c/e/528405de5b3a2f177e0ef847)
+<img width="856" alt="Screen Shot 2019-07-05 at 9 02 16 PM" src="https://user-images.githubusercontent.com/27908897/60751346-6156bb80-9f68-11e9-8f61-81beb1ceb3ad.png">
+
+## [Ex4 Link](https://cad.onshape.com/documents/2004900a5cd6068e9c3f3f13/w/4030c5bc0a589c10c97ccc0e/e/1583afa118f02b2adb99f9a8)
+<img width="901" alt="Screen Shot 2019-07-05 at 9 02 23 PM" src="https://user-images.githubusercontent.com/27908897/60751347-63207f00-9f68-11e9-9f91-b91219b189c4.png">
+
+## [Ex5 Link](https://cad.onshape.com/documents/adfc4258e118d9faefffc772/w/a6e4860400c460c59e21fae1/e/8865a6923bc9a3f779638252)
+<img width="1147" alt="Screen Shot 2019-07-05 at 9 02 33 PM" src="https://user-images.githubusercontent.com/27908897/60751349-6451ac00-9f68-11e9-900e-0b59ca9171d2.png">
+
+## [Ex6 Link](https://cad.onshape.com/documents/6ec3ca706af37e365d74650d/w/12490c839f70f678376af77b/e/6506ab15f35cc7fa4cdb56f4)
+<img width="855" alt="Screen Shot 2019-07-05 at 9 02 40 PM" src="https://user-images.githubusercontent.com/27908897/60751352-674c9c80-9f68-11e9-988c-7e36f345344e.png">
+
+## [Ex7 Link](https://cad.onshape.com/documents/9bb0feb3b7197639841b5e6b/w/dcff77028b7e356a93e02910/e/73ca20134810b3bdd185314e)
+<img width="833" alt="Screen Shot 2019-07-05 at 9 02 52 PM" src="https://user-images.githubusercontent.com/27908897/60751355-687dc980-9f68-11e9-8239-0ecb793ae99b.png">
+
+## [Ex8 Link](https://cad.onshape.com/documents/41a0902a0fbc869f1070eb4b/w/33f0ffb32e36d70a4fa52a73/e/f83f87eb09e020accb423dc0)
+<img width="853" alt="Screen Shot 2019-07-05 at 9 02 59 PM" src="https://user-images.githubusercontent.com/27908897/60751356-6a478d00-9f68-11e9-81b2-ab5828469f1a.png">
+
+## [Ex9 Link](https://cad.onshape.com/documents/5763ac9db029ca607e83fc50/w/637352478f970817aafd8507/e/0798628f572d90365b022633)
+<img width="890" alt="Screen Shot 2019-07-05 at 9 03 05 PM" src="https://user-images.githubusercontent.com/27908897/60751358-6c115080-9f68-11e9-8dfb-52c72fd27b5b.png">
+
+
+
+
+
+
+
+
+
+
