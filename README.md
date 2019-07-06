@@ -20,7 +20,32 @@ Hardware Piscine at 42Robolab including sketching, 3d modeling, and making API t
      * An API that creates a protruding head with a platform and brace. It takes holesize, arcdiameter, rib width, height, necksize, baseheight, and basewidth as parameters, so its easier to customize the piece.
 
 ## Sketch
-https://cad.onshape.com/documents/2901d421e3e5464ba7656a5e/w/4260e04f9896e3e12b90f38b/e/4fa1ebdc82f4195eb27936c1
+### Ex1 [Link] (https://cad.onshape.com/documents/2901d421e3e5464ba7656a5e/w/4260e04f9896e3e12b90f38b/e/4fa1ebdc82f4195eb27936c1) 
+<img width="836" alt="Screen Shot 2019-07-05 at 8 39 11 PM" src="https://user-images.githubusercontent.com/27908897/60751076-2c953500-9f65-11e9-86ee-51bc78d9642b.png">
+Ex2
+<img width="810" alt="Screen Shot 2019-07-05 at 8 39 21 PM" src="https://user-images.githubusercontent.com/27908897/60751077-2dc66200-9f65-11e9-8de4-f52885478592.png">
+Ex3
+<img width="739" alt="Screen Shot 2019-07-05 at 8 39 29 PM" src="https://user-images.githubusercontent.com/27908897/60751078-3f0f6e80-9f65-11e9-9073-dd443da623f3.png">
+Ex4
+<img width="786" alt="Screen Shot 2019-07-05 at 8 39 36 PM" src="https://user-images.githubusercontent.com/27908897/60751083-46367c80-9f65-11e9-9fc2-92fa9fb882d0.png">
+Ex5
+<img width="890" alt="Screen Shot 2019-07-05 at 8 39 43 PM" src="https://user-images.githubusercontent.com/27908897/60751084-48004000-9f65-11e9-96cb-6614af087a0b.png">
+Ex6
+<img width="772" alt="Screen Shot 2019-07-05 at 8 39 48 PM" src="https://user-images.githubusercontent.com/27908897/60751086-49ca0380-9f65-11e9-8c54-e1d035be3160.png">
+Ex7
+<img width="927" alt="Screen Shot 2019-07-05 at 8 39 55 PM" src="https://user-images.githubusercontent.com/27908897/60751088-4b93c700-9f65-11e9-8ab2-c3806a10ec0a.png">
+Ex8
+<img width="794" alt="Screen Shot 2019-07-05 at 8 40 01 PM" src="https://user-images.githubusercontent.com/27908897/60751094-4d5d8a80-9f65-11e9-85c7-4eb445defb48.png">
+Ex9
+<img width="817" alt="Screen Shot 2019-07-05 at 8 40 07 PM" src="https://user-images.githubusercontent.com/27908897/60751099-4f274e00-9f65-11e9-99e6-8111b075cadb.png">
+Ex10
+<img width="770" alt="Screen Shot 2019-07-05 at 8 40 13 PM" src="https://user-images.githubusercontent.com/27908897/60751101-50587b00-9f65-11e9-8d15-857f98f959ca.png">
+Ex11
+<img width="719" alt="Screen Shot 2019-07-05 at 8 40 20 PM" src="https://user-images.githubusercontent.com/27908897/60751103-53ec0200-9f65-11e9-8ade-7b95abe22103.png">
+[Ex12](https://cad.onshape.com/documents/fc3248857f16b8bbc6627139/w/8600282e90f16251bf7818a5/e/0bf0d189a02bf790439c17f1) 
+<img width="808" alt="Screen Shot 2019-07-05 at 8 40 26 PM" src="https://user-images.githubusercontent.com/27908897/60751105-56e6f280-9f65-11e9-9868-21dfcc91fc0d.png">
+
+
 https://cad.onshape.com/documents/1314672d35b2a3369913e6ba/w/aad2e5a86cb9ab9bc58b7958/e/11200a7e87fea2ed5c3a6410
 https://cad.onshape.com/documents/005ca1534c0bb788a6608905/w/0edf6b3bea17a7889235e457/e/4ec316fb41b5fc0198685a97
 https://cad.onshape.com/documents/adeb77867bd3a0b3d884964e/w/3a472c2bd68e6a335527ddee/e/bd2939ae3bb53bec682f4f78
@@ -31,7 +56,7 @@ https://cad.onshape.com/documents/403dda29367493e86d1cb420/w/8920edd32a2e2abed11
 https://cad.onshape.com/documents/f356465cf3bb6efa30a5fbd8/w/6e93f547590e8c6e0bb02bfc/e/2aa76700f4de3519c660815f
 https://cad.onshape.com/documents/2c29595d631be1510398d79f/w/9c75f6376190acd31480baff/e/f516b71ccfa16fc3358ccff9
 https://cad.onshape.com/documents/e11900d7274c98169d52bdff/w/3d9a848771a8a1614bb6b672/e/2c2a415b7668573ad5a798cc
-https://cad.onshape.com/documents/fc3248857f16b8bbc6627139/w/8600282e90f16251bf7818a5/e/0bf0d189a02bf790439c17f1
+
 
 ## 3D Models
 https://cad.onshape.com/documents/d7805382c06ffe7c0ff71e7b/w/135c267ab01134a815dbe660/e/a26a36dec67e1446019ec76d
