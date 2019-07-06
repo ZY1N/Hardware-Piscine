@@ -25,8 +25,8 @@ Hardware Piscine at 42Robolab including sketching, 3d modeling, and making API t
      ![3dfeaturescript](https://user-images.githubusercontent.com/27908897/60760832-aaeae900-9ff0-11e9-9f67-97b2a1874e46.gif)
      
 ## Sketch
-## [Ex1 Link](https://cad.onshape.com/documents/2901d421e3e5464ba7656a5e/w/4260e04f9896e3e12b90f38b/e/4fa1ebdc82f4195eb27936c1)
-<img width="836" alt="Screen Shot 2019-07-05 at 8 39 11 PM" src="https://user-images.githubusercontent.com/27908897/60751076-2c953500-9f65-11e9-86ee-51bc78d9642b.png">
+## <!-- [Ex1 Link](https://cad.onshape.com/documents/2901d421e3e5464ba7656a5e/w/4260e04f9896e3e12b90f38b/e/4fa1ebdc82f4195eb27936c1)
+<img width="836" alt="Screen Shot 2019-07-05 at 8 39 11 PM" src="https://user-images.githubusercontent.com/27908897/60751076-2c953500-9f65-11e9-86ee-51bc78d9642b.png"> -->
 
 
 ## [Ex2 Link](https://cad.onshape.com/documents/1314672d35b2a3369913e6ba/w/aad2e5a86cb9ab9bc58b7958/e/11200a7e87fea2ed5c3a6410)
