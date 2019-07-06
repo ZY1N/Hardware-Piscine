@@ -12,15 +12,15 @@ Hardware Piscine at 42Robolab including sketching, 3d modeling, and making API t
     * pic and links
 
 ## API:
-  * LegoAPI
+  * [LegoAPI](https://cad.onshape.com/documents/ef102ea9e372ff87dc71b3e6/w/449644b402c70e1967400424/e/8c4f8396db18a0aca3b55f0c)
      * An API to create standardize lego pieces based on the user inputed number of rows and columns. It self adjusts for the type of post(hollow/ solid) for that particular piece.
      ![lego2](https://user-images.githubusercontent.com/27908897/60760841-d53ca680-9ff0-11e9-88eb-c825e3eb7c60.gif)
  
-  * Circles Inside an Octagon API
+  * [Circles Inside an Octagon API](https://cad.onshape.com/documents/0c64929ee3d6dfa373f9bb81/w/a76d211da140b96444136e4b/e/81d20f9148e15d3a95af2ec6)
      * An API to create a octagon with circles inside of it, it takes circle radius, distance , and the octagon size.
      ![Untitled2](https://user-images.githubusercontent.com/27908897/60760833-ad4d4300-9ff0-11e9-8c7e-3c138586ca4c.gif)
  
- * 3D Circular Head with Platform and Brace API
+ * [3D Circular Head with Platform and Brace API](https://cad.onshape.com/documents/5b55af3c77dc35f131370ac4/w/999d7013e18e302ed84118c7/e/01880724c1beacc5cb27955e)
      * An API that creates a protruding head with a platform and brace. It takes holesize, arcdiameter, rib width, height, necksize, baseheight, and basewidth as parameters, so its easier to customize the piece.
      ![3dfeaturescript](https://user-images.githubusercontent.com/27908897/60760832-aaeae900-9ff0-11e9-9f67-97b2a1874e46.gif)
      
